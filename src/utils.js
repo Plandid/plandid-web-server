@@ -1,6 +1,8 @@
 const axios = require("axios");
 const config = require("./config");
 
+let jwtKeys = {};
+
 function objectMatchesTemplate(obj, template, typeCheck=false) {
     const notValid = typeCheck ? 
         function(key) { return !(key in obj) || !(typeof template[key] === typeof obj[key]) } :
@@ -106,10 +108,42 @@ async function simpleDatabaseMethods(router, collection, pathFilter={}, recordFi
     });
 }
 
+async function getService() {
+    let variables = {};
+    try {
+        const res = await axios.get(new URL(`services/${process.env.SERVICE_ID}`, process.env.APPDATA_DRIVER_URL).href, {
+            headers: {Authorization: `Basic ${getPlandidAuthToken()}`}
+        });
+        variables = res.data;
+    } catch (error) {
+        console.error("couldn't fetch environment");
+        console.error(error);
+    }
+    return variables ? variables : {};
+}
+
+async function getClients() {
+    let variables = {};
+    try {
+        const res = await axios.get(new URL(`clients`, process.env.APPDATA_DRIVER_URL).href, {
+            headers: {Authorization: `Basic ${getPlandidAuthToken()}`}
+        });
+        variables = res.data;
+    } catch (error) {
+        console.error("couldn't fetch environment");
+        console.error(error);
+    }
+    return variables ? variables : {};
+}
+
 module.exports = {
+    jwtKeys: jwtKeys,
+
     objectMatchesTemplate: objectMatchesTemplate,
     getPlandidAuthToken: getPlandidAuthToken,
     simpleDatabaseMethods: simpleDatabaseMethods,
+    getService: getService,
+    getClients: getClients,
 
     checkForClientError: function(req, options) {
         let message = "";
@@ -137,19 +171,6 @@ module.exports = {
         return serviceIdMap;
     },
 
-    getClientIdMap: async function() {
-        let clientIdMap = {};
-        const res = await axios.get(new URL("clients", process.env.APPDATA_DRIVER_URL).href, {
-            headers: {Authorization: `Basic ${getPlandidAuthToken()}`}
-        });
-        
-        for (const service of res.data) {
-            clientIdMap[service.name] = service._id;
-        }
-
-        return clientIdMap;
-    },
-
     getEnvironment: async function() {
         let variables = {};
         try {
@@ -162,5 +183,19 @@ module.exports = {
             console.error(error);
         }
         return variables ? variables : {};
+    },
+
+    updateJwtKeys: async function() {
+        const service = await getService();
+        const clients = await getClients();
+        let newKeys = {};
+        
+        for (const client of clients) {
+            if (service.supportedClients.hasOwnProperty(client.name)) {
+                jwtKeys[client.name] = client.jwtKey;
+            }
+        }
+
+        jwtKeys = newKeys;
     }
 }

@@ -1,6 +1,6 @@
 {
   "name": "plandid-web-server",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "server that handles requests from plandid-web-client",
   "main": "server.js",
   "scripts": {
