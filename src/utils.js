@@ -1,5 +1,4 @@
 const axios = require("axios");
-const { ObjectID } = require("./database");
 const config = require("./config");
 
 function objectMatchesTemplate(obj, template, typeCheck=false) {
