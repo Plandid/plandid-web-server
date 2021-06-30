@@ -151,16 +151,16 @@ module.exports = {
     },
 
     getEnvironment: async function() {
+        let variables = {};
         try {
             const res = await axios.get(new URL(`services/${process.env.SERVICE_ID}`, process.env.APPDATA_DRIVER_URL).href, {
                 headers: {Authorization: `Basic ${getPlandidAuthToken()}`}
             });
-
-            return res.environmentVariables;
+            variables = res.data.environmentVariables;
         } catch (error) {
             console.error("couldn't fetch environment");
             console.error(error);
-            return {};
         }
+        return variables ? variables : {};
     }
 }
