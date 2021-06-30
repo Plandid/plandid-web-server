@@ -1,0 +1,44 @@
+{
+  "name": "plandid-web-server",
+  "version": "0.0.0",
+  "description": "server that handles requests from plandid-web-client",
+  "main": "server.js",
+  "scripts": {
+    "prepare": "bash scripts/preinstall.sh",
+    "test": "jest",
+    "start": "node src/server.js",
+    "delete-database": "node scripts/deleteDatabase.js",
+    "create-database": "node scripts/createDatabase.js",
+    "clear-database": "node scripts/clearDatabase.js",
+    "update-database": "node scripts/updateDatabase.js",
+    "increment-patch": "node scripts/incrementPatch.js",
+    "increment-minor": "node scripts/incrementMinor.js",
+    "increment-major": "node scripts/incrementMajor.js",
+    "commit-minor": "bash scripts/commit-minor.sh",
+    "commit-major": "bash scripts/commit-major.sh",
+    "tag-commit": "node scripts/tagCommit.js",
+    "build-image": "node scripts/buildImage.js",
+    "run-container": "node scripts/runContainer.js",
+    "gcp-copy-devimage-to-prod": "bash scripts/gcp-copy-devimage-to-prod.sh",
+    "upload-image": "bash scripts/upload-image.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Plandid/plandid-web-server.git"
+  },
+  "author": "Carl Schader",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Plandid/plandid-web-server/issues"
+  },
+  "homepage": "https://github.com/Plandid/plandid-web-server#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "basic-auth": "^2.0.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "jest": "^27.0.6"
+  }
+}
