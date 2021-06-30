@@ -137,5 +137,18 @@ module.exports = {
         return serviceIdMap;
     },
 
+    getClientIdMap: async function() {
+        let clientIdMap = {};
+        const res = await axios.get(new URL("clients", process.env.APPDATA_DRIVER_URL).href, {
+            headers: {Authorization: `Basic ${getPlandidAuthToken()}`}
+        });
+        
+        for (const service of res.data) {
+            clientIdMap[service.name] = service._id;
+        }
+
+        return clientIdMap;
+    },
+
     simpleDatabaseMethods: simpleDatabaseMethods
 }

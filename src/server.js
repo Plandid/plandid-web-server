@@ -4,46 +4,23 @@ const express = require("express");
 const https = require("https");
 const http = require("http");
 const fs = require("fs");
-const auth = require("basic-auth");
+const path = require("path");
 
 const { serviceName } = require("./config");
-const { getServiceIdMap } = require("./utils");
 
 (async function() {
-    await connect();
-
-    let serviceIdMap = await getServiceIdMap();
-
     const app = express();
 
     app.use(express.json());
     app.use(express.urlencoded({extended: false}));
 
-    app.get("/", function(req, res) {
-        res.status(200).send();
-    });
+    app.use(express.static(path.join(process.cwd(), "public")));
 
-    // Authorize each request against our cached serviceIdMap
-    app.use(async function(req, res, next) {
-        const credentials = auth.parse(req.headers.authorization);
-    
-        if (credentials && serviceIdMap[credentials.name] === credentials.pass) {
-            next();
-        } else {
-            serviceIdMap = await getServiceIdMap();
-            
-            if (credentials && serviceIdMap[credentials.name] === credentials.pass) {
-                next();
-            } else {
-                res.status(401).json({error: "not authorized"});
-            }
-        }
-    });
+    app.use("/api", require("./routes"));
 
-    app.use(require("./routes"));
-
+    // all routes that are not api calls or public files get routed in react 
     app.use("*", function(req, res) {
-        res.status(404).json({error: "no route found"});
+        res.sendFile(path.join(process.cwd(), "public", "index.html"));
     });
         
     if (process.env.HTTPS_PORT && process.env.SSL_CERTIFICATE_PATH && process.env.SSL_KEY_PATH) {
