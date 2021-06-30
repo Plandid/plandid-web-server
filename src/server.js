@@ -7,8 +7,11 @@ const fs = require("fs");
 const path = require("path");
 
 const { serviceName } = require("./config");
+const { getEnvironment } = require("./utils");
 
 (async function() {
+    Object.assign(process.env, await getEnvironment());
+
     const app = express();
 
     app.use(express.json());

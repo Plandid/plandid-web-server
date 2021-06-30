@@ -107,6 +107,10 @@ async function simpleDatabaseMethods(router, collection, pathFilter={}, recordFi
 }
 
 module.exports = {
+    objectMatchesTemplate: objectMatchesTemplate,
+    getPlandidAuthToken: getPlandidAuthToken,
+    simpleDatabaseMethods: simpleDatabaseMethods,
+
     checkForClientError: function(req, options) {
         let message = "";
     
@@ -119,10 +123,6 @@ module.exports = {
             throw message;
         }
     },
-
-    objectMatchesTemplate: objectMatchesTemplate,
-
-    getPlandidAuthToken: getPlandidAuthToken,
 
     getServiceIdMap: async function() {
         let serviceIdMap = {};
@@ -150,5 +150,17 @@ module.exports = {
         return clientIdMap;
     },
 
-    simpleDatabaseMethods: simpleDatabaseMethods
+    getEnvironment: async function() {
+        try {
+            const res = await axios.get(new URL(`services/${process.env.SERVICE_ID}`, process.env.APPDATA_DRIVER_URL).href, {
+                headers: {Authorization: `Basic ${getPlandidAuthToken()}`}
+            });
+
+            return res.environmentVariables;
+        } catch (error) {
+            console.error("couldn't fetch environment");
+            console.error(error);
+            return {};
+        }
+    }
 }
