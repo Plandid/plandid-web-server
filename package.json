@@ -1,6 +1,6 @@
 {
   "name": "plandid-web-server",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "server that handles requests from plandid-web-client",
   "main": "server.js",
   "scripts": {
@@ -19,6 +19,7 @@
     "tag-commit": "node scripts/tagCommit.js",
     "build-image": "node scripts/buildImage.js",
     "run-container": "node scripts/runContainer.js",
+    "kill-all-containers": "bash scripts/kill-all-containers.sh",
     "gcp-copy-devimage-to-prod": "bash scripts/gcp-copy-devimage-to-prod.sh",
     "upload-image": "bash scripts/upload-image.sh"
   },
