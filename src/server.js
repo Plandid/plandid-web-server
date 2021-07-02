@@ -7,24 +7,21 @@ const fs = require("fs");
 const path = require("path");
 
 const { serviceName } = require("./config");
-const { getEnvironment, updateJwtKeys, jwtKeys } = require("./utils");
+const { getEnvironment } = require("./utils");
 
 (async function() {
     Object.assign(process.env, await getEnvironment());
-    await updateJwtKeys();
 
     const app = express();
 
     app.use(express.json());
     app.use(express.urlencoded({extended: false}));
 
-    app.use(express.static(path.join(process.cwd(), "public")));
-
-    app.use("/api", require("./routes"));
+    app.use(express.static(path.join(process.cwd(), "build")));
 
     // all routes that are not api calls or public files get routed in react 
     app.use("*", function(req, res) {
-        res.sendFile(path.join(process.cwd(), "public", "index.html"));
+        res.sendFile(path.join(process.cwd(), "build", "index.html"));
     });
         
     if (process.env.HTTPS_PORT && process.env.SSL_CERTIFICATE_PATH && process.env.SSL_KEY_PATH) {
